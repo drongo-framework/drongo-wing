@@ -31,20 +31,20 @@ class AuthViews(object):
 
     def login(self, request, response):
         self.before(request, response)
-        self.render(request, response, 'auth/login.html')
+        self.render(request, response, 'auth/login.html.j2')
         self.after(request, response)
 
     def register(self, request, response):
         self.before(request, response)
-        self.render(request, response, 'auth/register.html')
+        self.render(request, response, 'auth/register.html.j2')
         self.after(request, response)
 
     def register_success(self, request, response):
         self.before(request, response)
-        self.render(request, response, 'auth/register-success.html')
+        self.render(request, response, 'auth/register-success.html.j2')
         self.after(request, response)
 
     def activation_failure(self, request, response):
         self.before(request, response)
-        self.render(request, response, 'auth/activate-failure.html')
+        self.render(request, response, 'auth/activate-failure.html.j2')
         self.after(request, response)

@@ -3,11 +3,10 @@ from drongo.utils import dict2
 
 
 class AuthActions(object):
-    def __init__(self, auth):
-        self.app = auth.app
-        self.backend = auth.backend
-        self.base_url = auth.base_url
-        self.auth = auth
+    def __init__(self, module):
+        self.app = module.app
+        self.module = module
+        self.base_url = module.base_url
         self.init()
 
     def init(self):
@@ -38,11 +37,8 @@ class AuthActions(object):
         try:
             username = request.query.get('username')[0]
             password = request.query.get('password')[0]
-            self.backend.verify_login(username, password)
-            request.context.session.auth.user = dict2(
-                username=username,
-                authenticated=True
-            )
+            self.module.verify_login(username, password)
+            self.module.authenticate_user(request, response, username)
 
             if 'next' in request.query:
                 redirect_url = request.query.get('next')[0]
@@ -51,9 +47,7 @@ class AuthActions(object):
             self.redirect(response, redirect_url)
 
         except Exception as e:
-            request.context.session.auth.messages.error = [
-                str(e)
-            ]
+            self.module.add_error_message(request, str(e))
             self.redirect(response, self.base_url + '/login')
         self.after(request, response)
 
@@ -61,10 +55,7 @@ class AuthActions(object):
         assert request.method == 'GET'
         self.before(request, response)
 
-        request.context.session.auth.user = dict2(
-            username='anonymus',
-            authenticated=False
-        )
+        self.module.logout(request)
 
         if 'next' in request.query:
             redirect_url = request.query.get('next')[0]
@@ -82,13 +73,11 @@ class AuthActions(object):
         try:
             username = request.query.get('username')[0]
             password = request.query.get('password')[0]
-            self.backend.create_user(username, password)
+            self.module.create_user(username, password)
             self.redirect(response, self.base_url + '/register/success')
 
         except Exception as e:
-            request.context.session.auth.messages.error = [
-                str(e)
-            ]
+            self.module.add_error_message(request, str(e))
             self.redirect(response, self.base_url + '/register')
 
         self.after(request, response)

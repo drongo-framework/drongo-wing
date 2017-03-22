@@ -25,6 +25,9 @@ class Auth(object):
     def create_user(self, username, password, active=False):
         return self.backend.create_user(username, password, active=active)
 
+    def verify_login(self, username, password):
+        return self.backend.verify_login(username, password)
+
     def update_user(self, username, fields={}):
         return self.backend.update_user(username, fields)
 
@@ -32,4 +35,15 @@ class Auth(object):
         request.context.session.auth.user = dict2(
             username=username,
             authenticated=True
+        )
+
+    def logout(self, request):
+        request.context.session.auth.user = dict2(
+            username='anonymus',
+            authenticated=False
+        )
+
+    def add_error_message(self, request, message):
+        request.context.session.auth.messages.setdefault('error', []).append(
+            message
         )

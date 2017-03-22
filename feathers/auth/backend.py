@@ -26,6 +26,12 @@ class AuthMongoBackend(AuthBackend):
         if not user['active']:
             raise Exception('User account is not active!')
 
+    def user_exists(self, username):
+        user = self.collection.find_one({
+            'username': username,
+        })
+        return user is not None
+
     def create_user(self, username, password, active=False):
         user = self.collection.find_one({
             'username': username,
@@ -36,11 +42,22 @@ class AuthMongoBackend(AuthBackend):
         user = {
             'username': username,
             'password': pbkdf2_sha256.hash(password),
-            'active': False,
+            'active': active,
             'activation_code': uuid.uuid4().hex,
             'registered_on': datetime.utcnow()
         }
         self.collection.insert_one(user)
+
+    def update_user(self, username, fields={}):
+        user = self.collection.find_one({
+            'username': username,
+        })
+        self.collection.update_one(
+            {'_id': user['_id']},
+            {
+                '$set': fields
+            }
+        )
 
     def activate_user(self, username, code):
         user = self.collection.find_one({

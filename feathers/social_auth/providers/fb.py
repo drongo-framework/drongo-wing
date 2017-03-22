@@ -23,6 +23,11 @@ class Facebook(object):
         response.set_content('')
 
     def callback(self, request, response, callback_url):
+        if 'error' in request.query:
+            self.module.auth_module.add_error_message(
+                request, 'Social login deined!')
+            return False
+
         # Get the access token
         params = urlencode({
             'client_id': self.settings['app_id'],
@@ -38,6 +43,11 @@ class Facebook(object):
         response = requests.get(url, params)
         access = response.json()
 
+        if 'access_token' not in access:
+            self.module.auth_module.add_error_message(
+                request, 'Could not get the token!')
+            return False
+
         # Get the profile
         url = 'https://graph.facebook.com/v2.8/me'
         params = {
@@ -46,6 +56,12 @@ class Facebook(object):
         }
         response = requests.get(url, params)
         profile = response.json()
+
+        if 'email' not in profile:
+            self.module.auth_module.add_error_message(
+                request, 'Could not get fetch the Email ID!')
+            return False
+
         username = profile.get('email')
         if not self.module.auth_module.user_exists(username):
             self.module.auth_module.create_user(

@@ -32,6 +32,9 @@ class Auth(object):
         return self.backend.update_user(username, fields)
 
     def authenticate_user(self, request, response, username):
+        self.update_user(username, {
+            'last_login': datetime.utcnow()
+        })
         request.context.session.auth.user = dict2(
             username=username,
             authenticated=True

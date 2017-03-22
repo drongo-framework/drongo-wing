@@ -15,6 +15,7 @@ class Facebook(object):
         params = urlencode({
             'client_id': self.settings['app_id'],
             'redirect_uri': callback_url,
+            'auth_type': 'rerequest',
             'scope': 'email,public_profile'
         })
         url = 'https://www.facebook.com/v2.8/dialog/oauth?' + params

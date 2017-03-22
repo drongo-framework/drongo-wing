@@ -78,5 +78,4 @@ class Facebook(object):
 
         self.module.auth_module.authenticate_user(request, response,
                                                   profile.get('email'))
-        # FIXME: Check for error cases
         return True

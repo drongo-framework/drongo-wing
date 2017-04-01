@@ -19,83 +19,51 @@ class AuthActions(object):
         self.app.add_route(
             self.base_url + '/activate/do', self.activate_do, 'GET')
 
-    def redirect(self, response, url):
-        response.set_status(HttpStatusCodes.HTTP_303)
-        response.set_header(HttpResponseHeaders.LOCATION, url)
-        response.set_content('')
-
-    def before(self, request, response):
-        request.context.modules.session.load(request)
-
-    def after(self, request, response):
-        request.context.modules.session.save(request, response)
-
-    def login_do(self, request, response):
-        assert request.method == 'POST'
-        self.before(request, response)
-
+    def login_do(self, ctx):
         try:
-            username = request.query.get('username')[0]
-            password = request.query.get('password')[0]
+            username = ctx.request.query.get('username')[0]
+            password = ctx.request.query.get('password')[0]
             self.module.verify_login(username, password)
-            self.module.authenticate_user(request, response, username)
+            self.module.authenticate_user(ctx, username)
 
-            if 'next' in request.query:
-                redirect_url = request.query.get('next')[0]
+            if 'next' in ctx.request.query:
+                redirect_url = ctx.request.query.get('next')[0]
             else:
                 redirect_url = '/'
-            self.redirect(response, redirect_url)
+            ctx.response.set_redirect(redirect_url)
 
         except Exception as e:
-            self.module.add_error_message(request, str(e))
-            self.redirect(response, self.base_url + '/login')
-        self.after(request, response)
+            self.module.add_error_message(ctx, str(e))
+            ctx.response.set_redirect(self.base_url + '/login')
 
-    def logout_do(self, request, response):
-        assert request.method == 'GET'
-        self.before(request, response)
+    def logout_do(self, ctx):
+        self.module.logout(ctx)
 
-        self.module.logout(request)
-
-        if 'next' in request.query:
-            redirect_url = request.query.get('next')[0]
+        if 'next' in ctx.request.query:
+            redirect_url = ctx.request.query.get('next')[0]
         else:
             redirect_url = '/'
 
-        self.redirect(response, redirect_url)
+        ctx.response.set_redirect(redirect_url)
 
-        self.after(request, response)
-
-    def register_do(self, request, response):
-        assert request.method == 'POST'
-        self.before(request, response)
-
+    def register_do(self, ctx):
         try:
-            username = request.query.get('username')[0]
-            password = request.query.get('password')[0]
+            username = ctx.request.query.get('username')[0]
+            password = ctx.request.query.get('password')[0]
             self.module.create_user(username, password)
-            self.redirect(response, self.base_url + '/register/success')
+            self.response.set_redirect(self.base_url + '/register/success')
 
         except Exception as e:
-            self.module.add_error_message(request, str(e))
-            self.redirect(response, self.base_url + '/register')
+            self.module.add_error_message(ctx, str(e))
+            self.response.set_redirect(self.base_url + '/register')
 
-        self.after(request, response)
-
-    def activate_do(self, request, response):
-        assert request.method == 'GET'
-        self.before(request, response)
-
+    def activate_do(self, ctx):
         try:
-            username = request.query.get('username')[0]
-            code = request.query.get('code')[0]
+            username = ctx.request.query.get('username')[0]
+            code = ctx.request.query.get('code')[0]
             self.backend.activate_user(username, code)
-            self.redirect(response, self.base_url + '/login')
+            ctx.response.set_redirect(self.base_url + '/login')
 
         except Exception as e:
-            request.context.session.auth.messages.error = [
-                str(e)
-            ]
-            self.redirect(response, self.base_url + '/activate/failure')
-
-        self.after(request, response)
+            self.module.add_error_message(str(e))
+            self.response.set_redirect(self.base_url + '/activate/failure')

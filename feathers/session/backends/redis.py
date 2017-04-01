@@ -6,11 +6,7 @@ import pickle
 DEFAULT = pickle.dumps(dict2())
 
 
-class Backend(object):
-    pass
-
-
-class RedisBackend(Backend):
+class RedisBackend(object):
     def __init__(self, app, connection):
         self.app = app
         self.connection = connection

@@ -23,37 +23,27 @@ class SocialAuth(object):
                 self.providers[setting['name']] = Facebook(self, setting)
 
         self.app.add_route(
-            self.base_url + '/{name}/begin', self.login)
+            self.base_url + '/{name}/begin', self.begin)
         self.app.add_route(
             self.base_url + '/{name}/callback', self.callback)
 
-    def before(self, request, response):
-        request.context.modules.session.load(request)
+    def redirect(self, ctx, url):
+        ctx.response.set_status(HttpStatusCodes.HTTP_303)
+        ctx.response.set_header(HttpResponseHeaders.LOCATION, url)
+        ctx.response.set_content('')
 
-    def after(self, request, response):
-        request.context.modules.session.save(request, response)
-
-    def redirect(self, response, url):
-        response.set_status(HttpStatusCodes.HTTP_303)
-        response.set_header(HttpResponseHeaders.LOCATION, url)
-        response.set_content('')
-
-    def login(self, request, response, name):
+    def begin(self, ctx, name):
         provider = self.providers.get(name)
         callback_url = self.base_url + '/' + name + '/callback'
         # FIXME: Hardcoded url
-        provider.login_redirect(request, response,
-                                'http://localhost:8000' + callback_url)
+        provider.login_redirect(ctx, 'http://localhost:8000' + callback_url)
 
-    def callback(self, request, response, name):
-        self.before(request, response)
+    def callback(self, ctx, name):
         provider = self.providers.get(name)
         callback_url = self.base_url + '/' + name + '/callback'
         # FIXME: Hardcoded url
-        result = provider.callback(request, response,
-                                   'http://localhost:8000' + callback_url)
-        self.after(request, response)
+        result = provider.callback(ctx, 'http://localhost:8000' + callback_url)
         if result:
-            self.redirect(response, '/')
+            self.redirect(ctx, '/')
         else:
-            self.redirect(response, '/auth/login')
+            self.redirect(ctx, '/auth/login')

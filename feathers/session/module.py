@@ -1,25 +1,27 @@
-from .backend import RedisBackend
-
 import uuid
 
 
-SESSION_COOKIE = '_drongo_sessid'
-
-
 class Session(object):
-    def __init__(self, app, backend='redis', connection=None):
+    def __init__(self, app, **config):
         self.app = app
         self.backend = None
+
+        backend = config.get('backend')
         if backend == 'redis':
-            self.backend = RedisBackend(app, connection)
+            from .backends.redis import RedisBackend
+            conn = config.get('connection')
+            self.backend = RedisBackend(app, conn)
 
-    def load(self, request):
-        sessid = request.cookies.get(SESSION_COOKIE, None) or uuid.uuid4().hex
-        if self.backend is not None:
-            request.context.session = self.backend.load(sessid)
-            return request.context.session
+        self.cookie_name = config.get('cookie_name', '_drongo_sessid')
+        app.add_middleware(self)
 
-    def save(self, request, response):
+    def before(self, ctx):
+        sessid = ctx.request.cookies.get(self.cookie_name, None) \
+                    or uuid.uuid4().hex
         if self.backend is not None:
-            self.backend.save(request.context.session)
-            response.set_cookie(SESSION_COOKIE, request.context.session._id)
+            ctx.session = self.backend.load(sessid)
+
+    def after(self, ctx):
+        if self.backend is not None:
+            self.backend.save(ctx.session)
+            ctx.response.set_cookie(self.cookie_name, ctx.session._id)

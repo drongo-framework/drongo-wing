@@ -11,7 +11,7 @@ class Facebook(object):
         self.module = module
         self.settings = settings
 
-    def login_redirect(self, request, response, callback_url):
+    def login_redirect(self, ctx, callback_url):
         params = urlencode({
             'client_id': self.settings['app_id'],
             'redirect_uri': callback_url,
@@ -19,12 +19,12 @@ class Facebook(object):
             'scope': 'email,public_profile'
         })
         url = 'https://www.facebook.com/v2.8/dialog/oauth?' + params
-        response.set_status(HttpStatusCodes.HTTP_303)
-        response.set_header(HttpResponseHeaders.LOCATION, url)
-        response.set_content('')
+        ctx.response.set_status(HttpStatusCodes.HTTP_303)
+        ctx.response.set_header(HttpResponseHeaders.LOCATION, url)
+        ctx.response.set_content('')
 
-    def callback(self, request, response, callback_url):
-        if 'error' in request.query:
+    def callback(self, ctx, callback_url):
+        if 'error' in ctx.request.query:
             self.module.auth_module.add_error_message(
                 request, 'Social login deined!')
             return False
@@ -39,14 +39,14 @@ class Facebook(object):
             'client_id': self.settings['app_id'],
             'client_secret': self.settings['app_secret'],
             'redirect_uri': callback_url,
-            'code': request.query['code'][0]
+            'code': ctx.request.query['code'][0]
         }
         response = requests.get(url, params)
         access = response.json()
 
         if 'access_token' not in access:
             self.module.auth_module.add_error_message(
-                request, 'Could not get the token!')
+                ctx, 'Could not get the token!')
             return False
 
         # Get the profile
@@ -77,6 +77,5 @@ class Facebook(object):
             }
         )
 
-        self.module.auth_module.authenticate_user(request, response,
-                                                  profile.get('email'))
+        self.module.auth_module.authenticate_user(ctx, profile.get('email'))
         return True

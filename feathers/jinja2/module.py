@@ -8,9 +8,9 @@ class SilentUndefined(jinja2.Undefined):
 
 
 class Jinja2(object):
-    def __init__(self, app, template_dir):
+    def __init__(self, app, **config):
         self.app = app
-        self.template_dir = template_dir
+        self.template_dir = config.get('template_dir')
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(self.template_dir),
             undefined=SilentUndefined

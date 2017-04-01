@@ -2,8 +2,9 @@ from drongo import HttpResponseHeaders, HttpStatusCodes
 from drongo.utils import dict2
 
 from .actions import AuthActions
-from .backend import AuthMongoBackend
 from .views import AuthViews
+
+from datetime import datetime
 
 
 class Auth(object):
@@ -14,7 +15,8 @@ class Auth(object):
         self.api_base_url = api_base_url
 
         if backend == 'mongo':
-            self.backend = AuthMongoBackend(connection)
+            from .backends.mongo import MongoBackend
+            self.backend = MongoBackend(connection)
 
         self.views = AuthViews(self)
         self.actions = AuthActions(self)
@@ -31,22 +33,22 @@ class Auth(object):
     def update_user(self, username, fields={}):
         return self.backend.update_user(username, fields)
 
-    def authenticate_user(self, request, response, username):
+    def authenticate_user(self, ctx, username):
         self.update_user(username, {
             'last_login': datetime.utcnow()
         })
-        request.context.session.auth.user = dict2(
+        ctx.session.auth.user = dict2(
             username=username,
             authenticated=True
         )
 
-    def logout(self, request):
-        request.context.session.auth.user = dict2(
-            username='anonymus',
+    def logout(self, ctx):
+        ctx.session.auth.user = dict2(
+            username=None,
             authenticated=False
         )
 
-    def add_error_message(self, request, message):
-        request.context.session.auth.messages.setdefault('error', []).append(
+    def add_error_message(self, ctx, message):
+        ctx.session.auth.messages.setdefault('error', []).append(
             message
         )

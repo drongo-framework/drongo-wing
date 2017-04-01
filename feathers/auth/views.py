@@ -3,7 +3,9 @@ class AuthViews(object):
         self.app = auth.app
         self.base_url = auth.base_url
         self.auth = auth
+
         self.init()
+        self.app.add_middleware(self)
 
     def init(self):
         self.app.add_route(
@@ -15,36 +17,23 @@ class AuthViews(object):
         self.app.add_route(
             self.base_url + '/activate/failure', self.activation_failure)
 
-    def before(self, request, response):
-        request.context.modules.session.load(request)
-        if 'messages' in request.context.session.auth:
-            response.context.messages = request.context.session.auth.pop(
+    def before(self, ctx):
+        if 'messages' in ctx.session.auth:
+            ctx.messages = ctx.session.auth.pop(
                 'messages')
-        response.context.update(request.context)
 
-    def after(self, request, response):
-        request.context.modules.session.save(request, response)
+    def render(self, ctx, template):
+        template = ctx.modules.jinja2.get_template(template)
+        ctx.response.set_content(template.render(ctx))
 
-    def render(self, request, response, template):
-        template = request.context.modules.jinja2.get_template(template)
-        response.set_content(template.render(response.context))
+    def login(self, ctx):
+        self.render(ctx, 'auth/login.html.j2')
 
-    def login(self, request, response):
-        self.before(request, response)
-        self.render(request, response, 'auth/login.html.j2')
-        self.after(request, response)
+    def register(self, ctx):
+        self.render(ctx, 'auth/register.html.j2')
 
-    def register(self, request, response):
-        self.before(request, response)
-        self.render(request, response, 'auth/register.html.j2')
-        self.after(request, response)
+    def register_success(self, ctx):
+        self.render(ctx, 'auth/register-success.html.j2')
 
-    def register_success(self, request, response):
-        self.before(request, response)
-        self.render(request, response, 'auth/register-success.html.j2')
-        self.after(request, response)
-
-    def activation_failure(self, request, response):
-        self.before(request, response)
-        self.render(request, response, 'auth/activate-failure.html.j2')
-        self.after(request, response)
+    def activation_failure(self, ctx):
+        self.render(ctx, 'auth/activate-failure.html.j2')

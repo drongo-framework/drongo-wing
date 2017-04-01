@@ -4,11 +4,7 @@ from passlib.hash import pbkdf2_sha256
 import uuid
 
 
-class AuthBackend(object):
-    pass
-
-
-class AuthMongoBackend(AuthBackend):
+class MongoBackend(object):
     def __init__(self, connection):
         self.connection = connection
         self.collection = connection.auth_users

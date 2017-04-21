@@ -1,5 +1,6 @@
 from drongo import HttpResponseHeaders
 
+from functools import partial
 from datetime import datetime, timedelta
 
 import mimetypes
@@ -30,6 +31,11 @@ class Static(object):
         self.app.add_route(
             self.base_url + '/{a}/{b}/{c}/{d}/{e}/{f}', self.serve_file)
 
+    def chunks(self, path):
+        with open(path, 'rb') as fd:
+            for chunk in iter(partial(fd.read, 102400), b''):
+                yield chunk
+
     def serve_file(self, ctx,
                    a=None, b=None, c=None, d=None, e=None, f=None):
         path = self.root_dir
@@ -47,8 +53,9 @@ class Static(object):
             ctx.response.set_header(HttpResponseHeaders.EXPIRES, expires)
 
             ctype = mimetypes.guess_type(path)[0] or 'application/octet-stream'
-            ctx.response.set_header(HttpResponseHeaders.CONTENT_TYPE, ctype)
 
-            with open(path, 'rb') as fd:
-                return fd.read()
+            ctx.response.set_header(HttpResponseHeaders.CONTENT_TYPE, ctype)
+            ctx.response.set_content(self.chunks(path), os.stat(path).st_size)
+            return
+
         return path

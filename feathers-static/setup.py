@@ -7,8 +7,6 @@ setup(
     name='feathers-static',
     version='1.0.0a0',
     description='Feathers static module.',
-    author='Sattvik Chakravarthy',
-    author_email='sattvik@gmail.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

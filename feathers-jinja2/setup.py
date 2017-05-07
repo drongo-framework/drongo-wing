@@ -7,8 +7,6 @@ setup(
     name='feathers-jinja2',
     version='1.0.0a0',
     description='Feathers jinja2 module.',
-    author='Sattvik Chakravarthy',
-    author_email='sattvik@gmail.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

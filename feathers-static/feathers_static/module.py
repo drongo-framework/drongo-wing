@@ -18,17 +18,17 @@ class Static(object):
         self.init()
 
     def init(self):
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}', self.serve_file)
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}/{b}', self.serve_file)
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}/{b}/{c}', self.serve_file)
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}/{b}/{c}/{d}', self.serve_file)
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}/{b}/{c}/{d}/{e}', self.serve_file)
-        self.app.add_route(
+        self.app.add_url(
             self.base_url + '/{a}/{b}/{c}/{d}/{e}/{f}', self.serve_file)
 
     def chunks(self, path):

@@ -21,6 +21,9 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
     ],
+    install_requires=[
+        'jinja2'
+    ]
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

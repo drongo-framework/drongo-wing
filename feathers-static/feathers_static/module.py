@@ -19,17 +19,29 @@ class Static(object):
 
     def init(self):
         self.app.add_url(
-            self.base_url + '/{a}', self.serve_file)
+            pattern=self.base_url + '/{a}',
+            method='GET',
+            call=self.serve_file)
         self.app.add_url(
-            self.base_url + '/{a}/{b}', self.serve_file)
+            pattern=self.base_url + '/{a}/{b}',
+            method='GET',
+            call=self.serve_file)
         self.app.add_url(
-            self.base_url + '/{a}/{b}/{c}', self.serve_file)
+            pattern=self.base_url + '/{a}/{b}/{c}',
+            method='GET',
+            call=self.serve_file)
         self.app.add_url(
-            self.base_url + '/{a}/{b}/{c}/{d}', self.serve_file)
+            pattern=self.base_url + '/{a}/{b}/{c}/{d}',
+            method='GET',
+            call=self.serve_file)
         self.app.add_url(
-            self.base_url + '/{a}/{b}/{c}/{d}/{e}', self.serve_file)
+            pattern=self.base_url + '/{a}/{b}/{c}/{d}/{e}',
+            method='GET',
+            call=self.serve_file)
         self.app.add_url(
-            self.base_url + '/{a}/{b}/{c}/{d}/{e}/{f}', self.serve_file)
+            pattern=self.base_url + '/{a}/{b}/{c}/{d}/{e}/{f}',
+            method='GET',
+            call=self.serve_file)
 
     def chunks(self, path):
         with open(path, 'rb') as fd:

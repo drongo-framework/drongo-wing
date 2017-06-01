@@ -4,9 +4,9 @@ from setuptools import find_packages, setup
 
 
 setup(
-    name='feathers-jinja2',
+    name='wing-database',
     version='1.0.0a0',
-    description='Feathers jinja2 module.',
+    description='Drongo wing database module.',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -18,9 +18,6 @@ setup(
         'Operating System :: POSIX',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
-    ],
-    install_requires=[
-        'jinja2'
     ],
     packages=find_packages(),
     include_package_data=True,

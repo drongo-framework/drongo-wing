@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
 from setuptools import find_packages, setup
-from feathers.version import __version__
 
 
 setup(
-    name='drongo-feathers',
-    version=__version__,
-    description='Feathers for drongo.',
-    author='Sattvik Chakravarthy',
-    author_email='sattvik@gmail.com',
+    name='wing-jinja2',
+    version='1.0.0a0',
+    description='Feathers jinja2 module.',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -21,6 +18,9 @@ setup(
         'Operating System :: POSIX',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP',
+    ],
+    install_requires=[
+        'jinja2'
     ],
     packages=find_packages(),
     include_package_data=True,

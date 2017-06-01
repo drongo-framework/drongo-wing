@@ -1,2 +1,2 @@
-# drongo-feathers
-Modules for drongo.
+# drongo-wing
+Modules that make your drongo fly.

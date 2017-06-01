@@ -4,9 +4,9 @@ from setuptools import find_packages, setup
 
 
 setup(
-    name='feathers-database',
+    name='wing-static',
     version='1.0.0a0',
-    description='Feathers database module.',
+    description='Feathers static module.',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

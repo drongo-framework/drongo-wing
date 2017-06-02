@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 setup(
     name='wing-static',
     version='1.0.0a0',
-    description='Feathers static module.',
+    description='Drongo wing static module.',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

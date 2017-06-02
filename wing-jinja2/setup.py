@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 setup(
     name='wing-jinja2',
     version='1.0.0a0',
-    description='Feathers jinja2 module.',
+    description='Drongo wing jinja2 module.',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

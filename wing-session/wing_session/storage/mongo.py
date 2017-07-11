@@ -1,11 +1,8 @@
-from drongo.utils import dict2
+from .common import DEFAULT
 
 from bson.objectid import ObjectId
 
 import pickle
-
-
-DEFAULT = pickle.dumps(dict2())
 
 
 class Mongo(object):

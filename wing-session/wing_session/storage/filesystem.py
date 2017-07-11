@@ -1,11 +1,8 @@
-from drongo.utils import dict2
+from .common import DEFAULT
 
 import os
 import pickle
 import uuid
-
-
-DEFAULT = pickle.dumps(dict2())
 
 
 class Filesystem(object):

@@ -19,6 +19,10 @@ class Session(object):
             from .storage.mongo import Mongo
             collection = config.get('collection')
             self.storage = Mongo(collection=collection)
+        elif storage == 'redis':
+            from .storage.redis import Redis
+            db = config.get('db')
+            self.storage = Redis(db=db)
 
         app.add_middleware(self)
 

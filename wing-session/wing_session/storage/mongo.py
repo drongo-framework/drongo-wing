@@ -26,6 +26,6 @@ class Mongo(object):
 
     def save(self, session):
         session_id = session._sessid
-        self.collection.update_one(dict(_id=ObjectId(session_id), {
-            '$set': session
-        }))
+        self.collection.update_one(dict(_id=ObjectId(session_id)), {
+            '$set': {'value': pickle.dumps(session)}
+        })

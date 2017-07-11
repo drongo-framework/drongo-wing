@@ -11,7 +11,7 @@ class MongoDatabase(object):
         port = kwargs.get('port', DEFAULT_PORT)
         name = kwargs.get('name')
         if uri:
-            client = pymongo.MongoClient(kwargs.get('uri'))
+            client = pymongo.MongoClient(uri)
         else:
             client = pymongo.MongoClient(host, port)
         self.db = client[name]

@@ -15,6 +15,10 @@ class Session(object):
             from .storage.filesystem import Filesystem
             path = config.get('session_path', './.sessions')
             self.storage = Filesystem(path=path)
+        elif storage == 'mongo':
+            from .storage.mongo import Mongo
+            collection = config.get('collection')
+            self.storage = Mongo(collection=collection)
 
         app.add_middleware(self)
 
